@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Image Compressor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+    }
+    input, select, button {
+      margin: 10px 0;
+      padding: 10px;
+      width: 100%;
+    }
+    img {
+      max-width: 100%;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Image Compressor</h2>
+    <input type="file" id="imageInput" accept="image/*">
+    <label for="targetSize">Select Target Size:</label>
+    <select id="targetSize">
+      <option value="10240">10 KB</option>
+      <option value="20480">20 KB</option>
+      <option value="30720">30 KB</option>
+      <option value="51200">50 KB</option>
+      <option value="102400">100 KB</option>
+      <option value="204800">200 KB</option>
+      <option value="307200">300 KB</option>
+      <option value="512000">500 KB</option>
+      <option value="1048576">1 MB</option>
+    </select>
+    <button onclick="compressImage()">Compress</button>
+    <div id="output"></div>
+  </div>
+
+  <script>
+    function compressImage() {
+      const file = document.getElementById('imageInput').files[0];
+      const targetSize = parseInt(document.getElementById('targetSize').value);
+
+      if (!file) {
+        alert('Please select an image.');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const img = new Image();
+        img.onload = function () {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+
+          let quality = 0.9;
+          let dataUrl = canvas.toDataURL('image/jpeg', quality);
+          while (dataURLSizeInBytes(dataUrl) > targetSize && quality > 0.1) {
+            quality -= 0.05;
+            dataUrl = canvas.toDataURL('image/jpeg', quality);
+          }
+
+          const output = document.getElementById('output');
+          output.innerHTML = `
+            <h3>Compressed Image:</h3>
+            <p>Size: ${(dataURLSizeInBytes(dataUrl) / 1024).toFixed(2)} KB</p>
+            <img src="${dataUrl}">
+            <a href="${dataUrl}" download="compressed.jpg">Download Image</a>
+          `;
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function dataURLSizeInBytes(dataURL) {
+      let base64Length = dataURL.split(',')[1].length;
+      return 3 * (base64Length / 4) - (dataURL.endsWith('==') ? 2 : dataURL.endsWith('=') ? 1 : 0);
+    }
+  </script>
+</body>
+</html>
