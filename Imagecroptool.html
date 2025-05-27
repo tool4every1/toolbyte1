@@ -7,7 +7,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.css" />
   <style>
     body {
-      background-color: #121212;
+      background: url('https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
+      background-size: cover;
       color: #ffffff;
       font-family: Arial, sans-serif;
       margin: 0;
@@ -20,6 +21,10 @@
     .container {
       max-width: 800px;
       width: 100%;
+      background-color: rgba(18, 18, 18, 0.9);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
     }
 
     .drop-zone {
@@ -29,11 +34,12 @@
       text-align: center;
       color: #aaa;
       margin-top: 1rem;
+      background-color: rgba(0, 0, 0, 0.3);
     }
 
     .drop-zone.dragover {
       border-color: #00e676;
-      background-color: #1e1e1e;
+      background-color: rgba(30, 30, 30, 0.6);
     }
 
     .crop-area, .preview-area {
@@ -150,7 +156,7 @@
               background: false,
               autoCropArea: 1
             });
-          }, 'image/jpeg', 0.8); // compress to 80% quality
+          }, 'image/jpeg', 0.8);
         };
         img.src = reader.result;
       };
@@ -158,21 +164,17 @@
     }
 
     dropZone.addEventListener('click', () => fileInput.click());
-
     dropZone.addEventListener('dragover', e => {
       e.preventDefault();
       dropZone.classList.add('dragover');
     });
-
     dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-
     dropZone.addEventListener('drop', e => {
       e.preventDefault();
       dropZone.classList.remove('dragover');
       const file = e.dataTransfer.files[0];
       handleFile(file);
     });
-
     fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
 
     aspectRatioSelect.addEventListener('change', () => {
