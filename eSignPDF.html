@@ -204,6 +204,7 @@
             justify-content: center;
             align-items: center;
             position: relative;
+            background: #f0f0f0;
         }
         
         #pdf-canvas {
@@ -218,10 +219,10 @@
             position: absolute;
             width: 200px;
             height: 80px;
-            border: 2px dashed rgba(255, 204, 0, 0.7);
+            border: 2px solid #ffcc00;
             border-radius: 5px;
-            background: rgba(255, 204, 0, 0.1);
-            display: none;
+            background: rgba(255, 204, 0, 0.2);
+            display: flex;
             justify-content: center;
             align-items: center;
             color: #ffcc00;
@@ -229,10 +230,11 @@
             cursor: move;
             z-index: 10;
             user-select: none;
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.5);
         }
         
         .signature-placeholder:hover {
-            background: rgba(255, 204, 0, 0.2);
+            background: rgba(255, 204, 0, 0.3);
         }
         
         .position-indicator {
@@ -245,7 +247,6 @@
             border-radius: 5px;
             font-size: 0.9rem;
             z-index: 20;
-            display: none;
         }
         
         .status-bar {
@@ -417,6 +418,37 @@
             border-radius: 5px;
             margin-top: 10px;
         }
+        
+        .position-guide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+        
+        .guide-line {
+            position: absolute;
+            background: rgba(255, 204, 0, 0.3);
+        }
+        
+        .horizontal {
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            transform: translateY(-50%);
+        }
+        
+        .vertical {
+            top: 0;
+            left: 50%;
+            width: 1px;
+            height: 100%;
+            transform: translateX(-50%);
+        }
     </style>
 </head>
 <body>
@@ -499,8 +531,12 @@
                 <div class="pdf-preview-container">
                     <div id="pdf-canvas-container">
                         <canvas id="pdf-canvas"></canvas>
+                        <div class="position-guide">
+                            <div class="guide-line horizontal"></div>
+                            <div class="guide-line vertical"></div>
+                        </div>
                         <div class="signature-placeholder" id="signature-placeholder">
-                            <i class="fas fa-signature"></i> Your Signature
+                            <div class="signature-text">Drag me to position</div>
                         </div>
                         <div class="position-indicator" id="position-indicator">X: 0, Y: 0</div>
                     </div>
@@ -556,7 +592,7 @@
         </div>
         
         <footer>
-            <p><i class="far fa-copyright"></i>  PDF Digital Signer With Placement & Quality</p>
+            <p><i class="far fa-copyright"></i> 2023 PDF Digital Signer | Fixed Placement & Quality</p>
         </footer>
     </div>
 
@@ -693,7 +729,7 @@
                 signatureIndicator.className = 'signature-indicator valid';
                 signatureStatus.textContent = 'Saved';
                 placeSignatureBtn.disabled = false;
-                signingStatus.textContent = 'High-quality signature saved. Ready to place on document.';
+                signingStatus.textContent = 'Signature saved. Ready to place on document.';
                 showSuccess('Signature saved successfully!');
             }
         });
@@ -728,19 +764,30 @@
         });
         
         placeSignatureBtn.addEventListener('click', () => {
-            if (signatureImage && pdfDoc) {
+            if (signatureImage) {
+                // Make placeholder visible
                 signaturePlaceholder.style.display = 'flex';
+                
+                // Apply the signature image
                 signaturePlaceholder.style.backgroundImage = `url(${signatureImage})`;
                 signaturePlaceholder.style.backgroundSize = 'contain';
                 signaturePlaceholder.style.backgroundRepeat = 'no-repeat';
                 signaturePlaceholder.style.backgroundPosition = 'center';
                 signaturePlaceholder.innerHTML = '';
+                
+                // Position at the center by default
+                const container = document.getElementById('pdf-canvas-container');
+                const containerRect = container.getBoundingClientRect();
+                const placeholderRect = signaturePlaceholder.getBoundingClientRect();
+                
+                const centerX = (containerRect.width - placeholderRect.width) / 2;
+                const centerY = (containerRect.height - placeholderRect.height) / 2;
+                
+                signaturePlaceholder.style.left = `${centerX}px`;
+                signaturePlaceholder.style.top = `${centerY}px`;
+                
                 positionIndicator.style.display = 'block';
                 updatePositionIndicator();
-                
-                // Position signature in the bottom right by default
-                signaturePlaceholder.style.left = 'calc(100% - 220px)';
-                signaturePlaceholder.style.top = '50px';
                 
                 downloadBtn.disabled = false;
                 signingStatus.textContent = 'Drag signature to position. Ready to download.';
@@ -766,9 +813,12 @@
         function drag(e) {
             if (!isDragging) return;
             
-            const containerRect = pdfCanvas.getBoundingClientRect();
-            const maxX = containerRect.width - signaturePlaceholder.offsetWidth;
-            const maxY = containerRect.height - signaturePlaceholder.offsetHeight;
+            const container = document.getElementById('pdf-canvas-container');
+            const containerRect = container.getBoundingClientRect();
+            const placeholderRect = signaturePlaceholder.getBoundingClientRect();
+            
+            const maxX = containerRect.width - placeholderRect.width;
+            const maxY = containerRect.height - placeholderRect.height;
             
             let x = e.clientX - containerRect.left - offsetX;
             let y = e.clientY - containerRect.top - offsetY;
@@ -792,7 +842,8 @@
         
         function updatePositionIndicator() {
             const rect = signaturePlaceholder.getBoundingClientRect();
-            const containerRect = pdfCanvas.getBoundingClientRect();
+            const container = document.getElementById('pdf-canvas-container');
+            const containerRect = container.getBoundingClientRect();
             
             const x = Math.round(rect.left - containerRect.left);
             const y = Math.round(rect.top - containerRect.top);
@@ -834,11 +885,12 @@
                     
                     // Get position relative to PDF canvas
                     const rect = signaturePlaceholder.getBoundingClientRect();
-                    const containerRect = pdfCanvas.getBoundingClientRect();
+                    const container = document.getElementById('pdf-canvas-container');
+                    const containerRect = container.getBoundingClientRect();
                     
                     // Calculate scale factors
-                    const scaleX = viewport.width / pdfCanvas.offsetWidth;
-                    const scaleY = viewport.height / pdfCanvas.offsetHeight;
+                    const scaleX = viewport.width / containerRect.width;
+                    const scaleY = viewport.height / containerRect.height;
                     
                     // Convert pixel position to PDF coordinates
                     const x = (rect.left - containerRect.left) * scaleX;
@@ -880,8 +932,8 @@
                     }, 100);
                     
                     // Alert user
-                    signingStatus.textContent = 'Document signed with high quality!';
-                    showSuccess('Your document has been digitally signed with high resolution!');
+                    signingStatus.textContent = 'Document signed successfully!';
+                    showSuccess('Your document has been digitally signed!');
                     successBanner.style.display = 'block';
                     setTimeout(() => {
                         successBanner.style.display = 'none';
@@ -966,7 +1018,7 @@
                 
                 // Reset signature placement
                 signaturePlaceholder.style.backgroundImage = '';
-                signaturePlaceholder.innerHTML = '<i class="fas fa-signature"></i> Your Signature';
+                signaturePlaceholder.innerHTML = '<div class="signature-text">Drag me to position</div>';
                 signaturePlaceholder.style.display = 'none';
                 positionIndicator.style.display = 'none';
                 downloadBtn.disabled = true;
