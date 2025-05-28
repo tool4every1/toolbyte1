@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Age Calculator</title>
+    <title>Date-Month-Year Age Calculator</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -14,7 +14,7 @@
         }
         
         body {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -24,11 +24,11 @@
         
         .container {
             width: 100%;
-            max-width: 900px;
+            max-width: 850px;
             background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
             border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
             padding: 40px;
             display: flex;
             flex-direction: column;
@@ -45,8 +45,8 @@
         h1 {
             font-size: 2.8rem;
             margin-bottom: 10px;
-            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(to right, #ffd700, #ffa500);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -55,6 +55,7 @@
             font-size: 1.2rem;
             opacity: 0.9;
             margin-top: 10px;
+            color: #e0e0e0;
         }
         
         .content {
@@ -67,9 +68,9 @@
             flex: 1;
             min-width: 300px;
             background: rgba(255, 255, 255, 0.08);
-            padding: 25px;
+            padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
         
         .result-section {
@@ -90,13 +91,19 @@
         }
         
         h2 i {
-            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            background: linear-gradient(to right, #ffd700, #ffa500);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         
-        .input-group {
+        .input-row {
+            display: flex;
+            gap: 15px;
             margin-bottom: 25px;
+        }
+        
+        .input-group {
+            flex: 1;
         }
         
         label {
@@ -104,9 +111,10 @@
             margin-bottom: 10px;
             font-size: 1.1rem;
             font-weight: 500;
+            color: #e0e0e0;
         }
         
-        input[type="date"] {
+        select {
             width: 100%;
             padding: 15px;
             border: none;
@@ -117,16 +125,22 @@
             outline: none;
             transition: all 0.3s ease;
             border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        input[type="date"]:focus {
-            background: rgba(255, 255, 255, 0.25);
-            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
-        }
-        
-        input[type="date"]::-webkit-calendar-picker-indicator {
-            filter: invert(1);
             cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px;
+        }
+        
+        select:focus {
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.3);
+        }
+        
+        select option {
+            background: rgba(30, 30, 45, 0.95);
+            color: white;
         }
         
         .btn {
@@ -134,19 +148,24 @@
             padding: 16px;
             border: none;
             border-radius: 10px;
-            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            background: linear-gradient(to right, #ff8c00, #ff4500);
             color: white;
             font-size: 1.2rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.4);
+            box-shadow: 0 5px 15px rgba(255, 140, 0, 0.4);
             margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
         }
         
         .btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(255, 126, 95, 0.6);
+            box-shadow: 0 8px 20px rgba(255, 140, 0, 0.6);
+            background: linear-gradient(to right, #ff9d00, #ff5500);
         }
         
         .btn:active {
@@ -167,7 +186,7 @@
             padding: 25px 15px;
             text-align: center;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, background 0.3s ease;
         }
         
         .result-card:hover {
@@ -178,18 +197,20 @@
         .result-value {
             font-size: 3.5rem;
             font-weight: 700;
-            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            background: linear-gradient(to right, #ffd700, #ffa500);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin: 10px 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
         
         .result-label {
             font-size: 1.1rem;
             opacity: 0.9;
+            color: #e0e0e0;
         }
         
-        .additional-info {
+        .info-card {
             background: rgba(255, 255, 255, 0.08);
             border-radius: 15px;
             padding: 25px;
@@ -215,7 +236,7 @@
         .info-icon {
             width: 45px;
             height: 45px;
-            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            background: linear-gradient(to right, #ff8c00, #ff4500);
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -230,21 +251,31 @@
         .info-title {
             font-size: 0.9rem;
             opacity: 0.8;
+            color: #bbb;
         }
         
         .info-value {
             font-size: 1.2rem;
             font-weight: 600;
             margin-top: 5px;
+            color: #ffd700;
         }
         
         .error {
-            background: rgba(255, 99, 71, 0.2);
-            border: 1px solid rgba(255, 99, 71, 0.4);
+            background: rgba(255, 50, 50, 0.2);
+            border: 1px solid rgba(255, 50, 50, 0.4);
             padding: 15px;
             border-radius: 10px;
             margin-top: 20px;
             display: none;
+            animation: shake 0.5s;
+            color: #ffcccc;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
         }
         
         .animate {
@@ -262,6 +293,11 @@
             margin-top: 20px;
             opacity: 0.7;
             font-size: 0.9rem;
+            color: #ccc;
+        }
+        
+        .input-highlight {
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.5);
         }
         
         @media (max-width: 768px) {
@@ -286,28 +322,72 @@
             .result-value {
                 font-size: 2.8rem;
             }
+            
+            .input-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-calculator"></i> Age Calculator</h1>
-            <p class="subtitle">Discover your exact age in years, months, and days</p>
+            <h1><i class="fas fa-calculator"></i> Date-Month-Year Age Calculator</h1>
+            <p class="subtitle">Enter your birth date in the order: Day → Month → Year</p>
         </header>
         
         <div class="content">
             <div class="input-section">
                 <h2><i class="far fa-calendar-alt"></i> Enter Your Birth Date</h2>
-                <div class="input-group">
-                    <label for="birthdate">Select your date of birth:</label>
-                    <input type="date" id="birthdate" max="">
+                
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="day"><i class="fas fa-calendar-day"></i> Day</label>
+                        <select id="day">
+                            <option value="" selected disabled>Select Day</option>
+                            <!-- Days will be populated by JS -->
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="month"><i class="fas fa-calendar-week"></i> Month</label>
+                        <select id="month">
+                            <option value="" selected disabled>Select Month</option>
+                            <option value="0">January</option>
+                            <option value="1">February</option>
+                            <option value="2">March</option>
+                            <option value="3">April</option>
+                            <option value="4">May</option>
+                            <option value="5">June</option>
+                            <option value="6">July</option>
+                            <option value="7">August</option>
+                            <option value="8">September</option>
+                            <option value="9">October</option>
+                            <option value="10">November</option>
+                            <option value="11">December</option>
+                        </select>
+                    </div>
                 </div>
+                
+                <div class="input-group">
+                    <label for="year"><i class="fas fa-calendar"></i> Year</label>
+                    <select id="year">
+                        <option value="" selected disabled>Select Year</option>
+                        <!-- Years will be populated by JS -->
+                    </select>
+                </div>
+                
                 <button class="btn" id="calculate-btn">
                     <i class="fas fa-calculator"></i> Calculate Age
                 </button>
+                
                 <div class="error" id="error-msg">
-                    <i class="fas fa-exclamation-circle"></i> Please enter a valid date of birth
+                    <i class="fas fa-exclamation-circle"></i> Please enter a valid date
                 </div>
             </div>
             
@@ -331,21 +411,12 @@
                     </div>
                 </div>
                 
-                <div class="additional-info">
-                    <h2><i class="fas fa-info-circle"></i> Additional Information</h2>
+                <div class="info-card">
+                    <h2><i class="fas fa-info-circle"></i> About Your Birth Date</h2>
                     <div class="info-grid">
                         <div class="info-item">
                             <div class="info-icon">
                                 <i class="fas fa-birthday-cake"></i>
-                            </div>
-                            <div class="info-text">
-                                <div class="info-title">Next Birthday</div>
-                                <div class="info-value" id="next-bday">--</div>
-                            </div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-icon">
-                                <i class="fas fa-calendar-week"></i>
                             </div>
                             <div class="info-text">
                                 <div class="info-title">Day of the Week</div>
@@ -354,20 +425,29 @@
                         </div>
                         <div class="info-item">
                             <div class="info-icon">
-                                <i class="fas fa-heart"></i>
+                                <i class="fas fa-calendar-week"></i>
                             </div>
                             <div class="info-text">
-                                <div class="info-title">Heart Beats</div>
-                                <div class="info-value" id="heartbeats">--</div>
+                                <div class="info-title">Zodiac Sign</div>
+                                <div class="info-value" id="zodiac">--</div>
                             </div>
                         </div>
                         <div class="info-item">
                             <div class="info-icon">
-                                <i class="fas fa-moon"></i>
+                                <i class="fas fa-clock"></i>
                             </div>
                             <div class="info-text">
-                                <div class="info-title">Slept</div>
-                                <div class="info-value" id="sleep">--</div>
+                                <div class="info-title">Next Birthday</div>
+                                <div class="info-value" id="next-bday">--</div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-heartbeat"></i>
+                            </div>
+                            <div class="info-text">
+                                <div class="info-title">Heart Beats</div>
+                                <div class="info-value" id="heartbeats">--</div>
                             </div>
                         </div>
                     </div>
@@ -376,22 +456,37 @@
         </div>
         
         <footer>
-            <p>Made with ❤️ | © 2023 Age Calculator | All your data remains private</p>
+            <p>Made with ❤️ | © 2023 Age Calculator | Your privacy is respected</p>
         </footer>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Set max date to today
-            const today = new Date();
-            const formattedDate = today.toISOString().split('T')[0];
-            document.getElementById('birthdate').max = formattedDate;
+            // Populate day dropdown
+            const daySelect = document.getElementById('day');
+            for (let i = 1; i <= 31; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                daySelect.appendChild(option);
+            }
             
-            // Set default date to 30 years ago for demo
+            // Populate year dropdown (from current year to 120 years ago)
+            const yearSelect = document.getElementById('year');
+            const currentYear = new Date().getFullYear();
+            for (let i = currentYear; i >= currentYear - 120; i--) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                yearSelect.appendChild(option);
+            }
+            
+            // Set default values for demo
             const defaultDate = new Date();
-            defaultDate.setFullYear(today.getFullYear() - 30);
-            const defaultFormatted = defaultDate.toISOString().split('T')[0];
-            document.getElementById('birthdate').value = defaultFormatted;
+            defaultDate.setFullYear(currentYear - 30);
+            daySelect.value = defaultDate.getDate();
+            monthSelect.value = defaultDate.getMonth();
+            yearSelect.value = defaultDate.getFullYear();
             
             // Calculate age on page load
             calculateAge();
@@ -399,23 +494,50 @@
             // Add event listener to the button
             document.getElementById('calculate-btn').addEventListener('click', calculateAge);
             
+            // Highlight input fields when focused
+            const inputs = document.querySelectorAll('select');
+            inputs.forEach(input => {
+                input.addEventListener('focus', () => {
+                    input.classList.add('input-highlight');
+                });
+                input.addEventListener('blur', () => {
+                    input.classList.remove('input-highlight');
+                });
+            });
+            
             function calculateAge() {
-                const birthdateInput = document.getElementById('birthdate').value;
+                const day = document.getElementById('day').value;
+                const month = document.getElementById('month').value;
+                const year = document.getElementById('year').value;
                 const errorMsg = document.getElementById('error-msg');
                 
                 // Reset error message
                 errorMsg.style.display = 'none';
                 
-                if (!birthdateInput) {
+                // Validate inputs
+                if (!day || !month || !year) {
+                    errorMsg.textContent = "Please fill in all fields";
                     errorMsg.style.display = 'block';
                     return;
                 }
                 
-                const birthdate = new Date(birthdateInput);
+                // Create birthdate object (months are 0-indexed)
+                const birthdate = new Date(year, month, day);
+                
+                // Check if the date is valid
+                if (birthdate.getDate() != day || 
+                    birthdate.getMonth() != month || 
+                    birthdate.getFullYear() != year) {
+                    errorMsg.textContent = "Please enter a valid date";
+                    errorMsg.style.display = 'block';
+                    return;
+                }
+                
                 const today = new Date();
                 
                 // Check if birthdate is in the future
                 if (birthdate > today) {
+                    errorMsg.textContent = "Birthdate cannot be in the future";
                     errorMsg.style.display = 'block';
                     return;
                 }
@@ -462,6 +584,10 @@
             function calculateAdditionalInfo(birthdate) {
                 const today = new Date();
                 
+                // Calculate day of the week
+                const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                document.getElementById('birth-day').textContent = days[birthdate.getDay()];
+                
                 // Calculate next birthday
                 const nextBirthday = new Date(today.getFullYear(), birthdate.getMonth(), birthdate.getDate());
                 if (nextBirthday < today) {
@@ -472,20 +598,31 @@
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                 document.getElementById('next-bday').textContent = `${diffDays} days`;
                 
-                // Calculate day of the week
-                const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-                document.getElementById('birth-day').textContent = days[birthdate.getDay()];
-                
                 // Calculate heart beats (approx 70 bpm)
                 const diffMs = today - birthdate;
                 const minutes = diffMs / (1000 * 60);
                 const heartbeats = Math.floor(minutes * 70);
                 document.getElementById('heartbeats').textContent = `${(heartbeats / 1000000).toFixed(1)}M`;
                 
-                // Calculate sleep (approx 8 hours per day)
-                const daysLived = diffMs / (1000 * 60 * 60 * 24);
-                const sleepHours = Math.floor(daysLived * 8);
-                document.getElementById('sleep').textContent = `${Math.floor(sleepHours / 24)} days`;
+                // Calculate zodiac sign
+                const zodiacSign = getZodiacSign(birthdate.getMonth() + 1, birthdate.getDate());
+                document.getElementById('zodiac').textContent = zodiacSign;
+            }
+            
+            function getZodiacSign(month, day) {
+                if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) return "Aquarius";
+                if ((month === 2 && day >= 19) || (month === 3 && day <= 20)) return "Pisces";
+                if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) return "Aries";
+                if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) return "Taurus";
+                if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) return "Gemini";
+                if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) return "Cancer";
+                if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return "Leo";
+                if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return "Virgo";
+                if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) return "Libra";
+                if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) return "Scorpio";
+                if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) return "Sagittarius";
+                if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return "Capricorn";
+                return "Unknown";
             }
         });
     </script>
