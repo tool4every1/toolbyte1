@@ -121,6 +121,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             margin-bottom: 25px;
+            position: relative;
         }
 
         .drop-area:hover, .drop-area.dragover {
@@ -258,6 +259,12 @@
             border-radius: 8px;
             background: rgba(67, 97, 238, 0.05);
             margin-bottom: 15px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .file-icon {
@@ -283,6 +290,10 @@
         .file-info h4 {
             font-weight: 500;
             margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 250px;
         }
 
         .file-info p {
@@ -382,6 +393,40 @@
             50% { opacity: 0.5; }
             100% { opacity: 1; }
         }
+
+        .file-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-top: 5px;
+            display: inline-block;
+        }
+
+        .status-queued {
+            background: #e0e0e0;
+            color: #616161;
+        }
+
+        .status-converting {
+            background: #fff8e1;
+            color: #ff8f00;
+        }
+
+        .status-completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
     </style>
 </head>
 <body>
@@ -406,18 +451,22 @@
                     <i class="fas fa-cloud-upload-alt"></i>
                     <h3>Drag & Drop Files Here</h3>
                     <p>Supported formats: PDF, DOCX, XLSX, PPTX, TXT, JPG, PNG</p>
-                    <button class="btn"><i class="fas fa-folder-open"></i> Browse Files</button>
+                    <button class="btn" id="browseBtn"><i class="fas fa-folder-open"></i> Browse Files</button>
+                    <input type="file" id="fileInput" class="file-input" multiple>
                 </div>
                 
                 <div class="conversion-options">
                     <div class="format-select">
                         <label>From Format</label>
                         <select id="fromFormat">
+                            <option value="auto">Detect Automatically</option>
                             <option value="pdf">PDF</option>
                             <option value="docx">Word (DOCX)</option>
                             <option value="xlsx">Excel (XLSX)</option>
                             <option value="pptx">PowerPoint (PPTX)</option>
                             <option value="txt">Text (TXT)</option>
+                            <option value="jpg">Image (JPG)</option>
+                            <option value="png">Image (PNG)</option>
                         </select>
                     </div>
                     
@@ -428,11 +477,13 @@
                     <div class="format-select">
                         <label>To Format</label>
                         <select id="toFormat">
-                            <option value="docx">Word (DOCX)</option>
                             <option value="pdf">PDF</option>
+                            <option value="docx">Word (DOCX)</option>
                             <option value="xlsx">Excel (XLSX)</option>
                             <option value="pptx">PowerPoint (PPTX)</option>
                             <option value="txt">Text (TXT)</option>
+                            <option value="jpg">Image (JPG)</option>
+                            <option value="png">Image (PNG)</option>
                         </select>
                     </div>
                 </div>
@@ -442,7 +493,7 @@
                 </div>
                 
                 <div style="text-align: center;">
-                    <button class="btn" id="convertBtn"><i class="fas fa-sync-alt"></i> Convert Document</button>
+                    <button class="btn" id="convertBtn"><i class="fas fa-sync-alt"></i> Convert Documents</button>
                 </div>
                 
                 <div class="file-list" id="fileList">
@@ -478,6 +529,7 @@
                             <li>"Download all" - Download converted files</li>
                             <li>"Select from [format]" - Set source format</li>
                             <li>"Convert to [format]" - Set target format</li>
+                            <li>"Start conversion" - Begin conversion process</li>
                         </ul>
                     </div>
                 </div>
@@ -521,22 +573,23 @@
         document.addEventListener('DOMContentLoaded', function() {
             // DOM Elements
             const dropArea = document.getElementById('dropArea');
+            const fileInput = document.getElementById('fileInput');
+            const browseBtn = document.getElementById('browseBtn');
             const convertBtn = document.getElementById('convertBtn');
             const progressBar = document.getElementById('progressBar');
             const fileList = document.getElementById('fileList');
             const startVoiceBtn = document.getElementById('startVoiceBtn');
             const stopVoiceBtn = document.getElementById('stopVoiceBtn');
             const voiceOutput = document.getElementById('voiceOutput');
+            const fromFormat = document.getElementById('fromFormat');
+            const toFormat = document.getElementById('toFormat');
             
-            // Sample files for demonstration
-            const sampleFiles = [
-                { name: "Annual Report.pdf", type: "pdf", size: "2.4 MB" },
-                { name: "Sales Data.xlsx", type: "xlsx", size: "1.1 MB" },
-                { name: "Presentation.pptx", type: "pptx", size: "3.7 MB" }
-            ];
+            // Array to store files
+            let uploadedFiles = [];
             
-            // Initialize with sample files
-            sampleFiles.forEach(file => addFileToList(file));
+            // Event listeners
+            browseBtn.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', handleFileSelect);
             
             // Drag and drop functionality
             ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -572,15 +625,29 @@
                 handleFiles(files);
             }
             
+            function handleFileSelect(e) {
+                const files = e.target.files;
+                handleFiles(files);
+            }
+            
             function handleFiles(files) {
-                [...files].forEach(file => {
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
                     const fileData = {
+                        file: file,
                         name: file.name,
                         type: getFileType(file.name),
-                        size: formatFileSize(file.size)
+                        size: formatFileSize(file.size),
+                        status: "queued",
+                        converted: false
                     };
+                    
+                    uploadedFiles.push(fileData);
                     addFileToList(fileData);
-                });
+                }
+                
+                // Reset file input to allow selecting same files again
+                fileInput.value = '';
             }
             
             function getFileType(fileName) {
@@ -603,9 +670,10 @@
                 return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
             }
             
-            function addFileToList(file) {
+            function addFileToList(fileData) {
                 const fileItem = document.createElement('div');
                 fileItem.className = 'file-item';
+                fileItem.dataset.name = fileData.name;
                 
                 const iconClass = {
                     'pdf': 'fas fa-file-pdf',
@@ -616,7 +684,7 @@
                     'jpg': 'fas fa-file-image',
                     'png': 'fas fa-file-image',
                     'file': 'fas fa-file'
-                }[file.type] || 'fas fa-file';
+                }[fileData.type] || 'fas fa-file';
                 
                 const iconColor = {
                     'pdf': '#e74c3c',
@@ -627,18 +695,31 @@
                     'jpg': '#9b59b6',
                     'png': '#9b59b6',
                     'file': '#95a5a6'
-                }[file.type] || '#95a5a6';
+                }[fileData.type] || '#95a5a6';
+                
+                const statusClass = {
+                    'queued': 'status-queued',
+                    'converting': 'status-converting',
+                    'completed': 'status-completed'
+                }[fileData.status] || '';
+                
+                const statusText = {
+                    'queued': 'Queued',
+                    'converting': 'Converting...',
+                    'completed': 'Completed'
+                }[fileData.status] || '';
                 
                 fileItem.innerHTML = `
                     <div class="file-icon" style="background: ${iconColor}">
                         <i class="${iconClass}"></i>
                     </div>
                     <div class="file-info">
-                        <h4>${file.name}</h4>
-                        <p>${file.type.toUpperCase()} • ${file.size}</p>
+                        <h4>${fileData.name}</h4>
+                        <p>${fileData.type.toUpperCase()} • ${fileData.size}</p>
+                        <span class="status-badge ${statusClass}">${statusText}</span>
                     </div>
                     <div class="file-actions">
-                        <div class="action-btn" title="Download">
+                        <div class="action-btn" title="Download" style="${fileData.converted ? '' : 'display: none'}">
                             <i class="fas fa-download"></i>
                         </div>
                         <div class="action-btn" title="Remove">
@@ -647,36 +728,79 @@
                     </div>
                 `;
                 
+                // Add event listener for remove button
+                const removeBtn = fileItem.querySelector('.file-actions .action-btn:last-child');
+                removeBtn.addEventListener('click', () => {
+                    const fileName = fileItem.dataset.name;
+                    uploadedFiles = uploadedFiles.filter(file => file.name !== fileName);
+                    fileItem.remove();
+                });
+                
                 fileList.appendChild(fileItem);
             }
             
-            // Conversion simulation
+            // Conversion function
             convertBtn.addEventListener('click', function() {
-                progressBar.style.width = '0%';
+                if (uploadedFiles.length === 0) {
+                    voiceOutput.innerHTML = '<p style="color: #e74c3c;">Please add files to convert first!</p>';
+                    return;
+                }
                 
-                let width = 0;
+                progressBar.style.width = '0%';
+                let completed = 0;
+                
+                // Update all files to converting status
+                uploadedFiles.forEach(file => {
+                    file.status = "converting";
+                    updateFileStatus(file.name, "converting");
+                });
+                
                 const interval = setInterval(() => {
-                    if (width >= 100) {
+                    // Simulate progress
+                    const progress = Math.min(progressBar.offsetWidth + 5, 100);
+                    progressBar.style.width = progress + '%';
+                    
+                    // Check if all files are processed
+                    if (progress >= 100) {
                         clearInterval(interval);
-                        simulateConversionComplete();
-                    } else {
-                        width += Math.random() * 15;
-                        progressBar.style.width = Math.min(width, 100) + '%';
+                        
+                        // Update files to completed status
+                        uploadedFiles.forEach(file => {
+                            file.status = "completed";
+                            file.converted = true;
+                            updateFileStatus(file.name, "completed");
+                        });
+                        
+                        voiceOutput.innerHTML = `<p><i class="fas fa-check-circle" style="color:#27ae60"></i> Conversion completed successfully! Your files are ready for download.</p>`;
+                        
+                        // Show download buttons
+                        document.querySelectorAll('.file-item .file-actions .action-btn:first-child').forEach(btn => {
+                            btn.style.display = 'flex';
+                        });
                     }
-                }, 300);
+                }, 200);
             });
             
-            function simulateConversionComplete() {
-                // Show success message
-                voiceOutput.innerHTML = `<p><i class="fas fa-check-circle" style="color:#27ae60"></i> Conversion completed successfully! Your files are ready for download.</p>`;
-                
-                // Add download buttons to all files
-                document.querySelectorAll('.file-item .file-actions').forEach(actions => {
-                    actions.innerHTML = `
-                        <div class="action-btn" title="Download" style="background: #27ae60; color: white; border-color: #27ae60;">
-                            <i class="fas fa-download"></i>
-                        </div>
-                    `;
+            function updateFileStatus(fileName, status) {
+                const fileItems = document.querySelectorAll('.file-item');
+                fileItems.forEach(item => {
+                    if (item.dataset.name === fileName) {
+                        const badge = item.querySelector('.status-badge');
+                        const statusClass = {
+                            'queued': 'status-queued',
+                            'converting': 'status-converting',
+                            'completed': 'status-completed'
+                        }[status] || '';
+                        
+                        const statusText = {
+                            'queued': 'Queued',
+                            'converting': 'Converting...',
+                            'completed': 'Completed'
+                        }[status] || '';
+                        
+                        badge.className = `status-badge ${statusClass}`;
+                        badge.textContent = statusText;
+                    }
                 });
             }
             
@@ -700,7 +824,8 @@
                         "Add file",
                         "Download all",
                         "Select from Excel",
-                        "Convert to PowerPoint"
+                        "Convert to PowerPoint",
+                        "Start conversion"
                     ];
                     
                     const command = commands[Math.floor(Math.random() * commands.length)];
@@ -718,7 +843,7 @@
                 voiceActive = false;
                 startVoiceBtn.classList.remove('recording');
                 
-                let response = `<p><i class="fas fa-microphone"></i> Command: "${command}"</p>`;
+                let response = `<p><i class="fas fa-microphone"></i> Command: <strong>"${command}"</strong></p>`;
                 
                 if (command.toLowerCase().includes("convert") && command.toLowerCase().includes("to")) {
                     const parts = command.split(" ");
@@ -726,34 +851,45 @@
                     const toIndex = parts.indexOf("to") + 1;
                     
                     if (fromIndex < parts.length && toIndex < parts.length) {
-                        const fromFormat = parts[fromIndex];
-                        const toFormat = parts[toIndex];
+                        const fromFormatValue = parts[fromIndex].toLowerCase();
+                        const toFormatValue = parts[toIndex].toLowerCase();
                         
-                        document.getElementById('fromFormat').value = fromFormat.toLowerCase();
-                        document.getElementById('toFormat').value = toFormat.toLowerCase();
+                        // Set the format in UI
+                        if (fromFormatValue !== "auto") {
+                            fromFormat.value = fromFormatValue;
+                        }
+                        toFormat.value = toFormatValue;
                         
-                        response += `<p>Conversion format set: ${fromFormat.toUpperCase()} to ${toFormat.toUpperCase()}</p>`;
-                        response += `<p>Click "Convert Document" to start conversion.</p>`;
+                        response += `<p>Conversion format set: <strong>${fromFormatValue.toUpperCase()} to ${toFormatValue.toUpperCase()}</strong></p>`;
                     }
                 } else if (command.toLowerCase().includes("add file")) {
                     response += `<p>Opening file browser...</p>`;
-                    // Simulate adding a new file
+                    // Trigger file selection
                     setTimeout(() => {
-                        const newFile = {
-                            name: "New Document.docx",
-                            type: "docx",
-                            size: "0.8 MB"
-                        };
-                        addFileToList(newFile);
-                    }, 1000);
+                        fileInput.click();
+                    }, 500);
                 } else if (command.toLowerCase().includes("download")) {
                     response += `<p>Preparing all files for download...</p>`;
                     // Simulate download
                     setTimeout(() => {
-                        voiceOutput.innerHTML += `<p><i class="fas fa-check-circle" style="color:#27ae60"></i> All files downloaded successfully!</p>`;
+                        response += `<p><i class="fas fa-check-circle" style="color:#27ae60"></i> All files downloaded successfully!</p>`;
+                        voiceOutput.innerHTML = response;
                     }, 1500);
+                } else if (command.toLowerCase().includes("select from")) {
+                    const format = command.split("from")[1].trim().toLowerCase();
+                    fromFormat.value = format;
+                    response += `<p>Source format set to: <strong>${format.toUpperCase()}</strong></p>`;
+                } else if (command.toLowerCase().includes("convert to")) {
+                    const format = command.split("to")[1].trim().toLowerCase();
+                    toFormat.value = format;
+                    response += `<p>Target format set to: <strong>${format.toUpperCase()}</strong></p>`;
+                } else if (command.toLowerCase().includes("start conversion")) {
+                    response += `<p>Starting conversion process...</p>`;
+                    setTimeout(() => {
+                        convertBtn.click();
+                    }, 800);
                 } else {
-                    response += `<p>Command not recognized. Please try again.</p>`;
+                    response += `<p style="color: #e74c3c;">Command not recognized. Please try again.</p>`;
                 }
                 
                 voiceOutput.innerHTML = response;
