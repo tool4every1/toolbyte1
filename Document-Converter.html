@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document Converter</title>
+    <title>DocuConvert Pro - Universal Document Converter</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -164,6 +164,7 @@
         .btn:hover {
             background: var(--secondary);
             transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
         .btn-outline {
@@ -175,6 +176,14 @@
         .btn-outline:hover {
             background: var(--primary);
             color: white;
+        }
+
+        .btn-success {
+            background: #27ae60;
+        }
+
+        .btn-success:hover {
+            background: #219653;
         }
 
         .conversion-options {
@@ -260,6 +269,7 @@
             background: rgba(67, 97, 238, 0.05);
             margin-bottom: 15px;
             animation: fadeIn 0.3s ease;
+            position: relative;
         }
 
         @keyframes fadeIn {
@@ -276,6 +286,7 @@
             background: var(--accent);
             border-radius: 8px;
             margin-right: 15px;
+            flex-shrink: 0;
         }
 
         .file-icon i {
@@ -285,6 +296,7 @@
 
         .file-info {
             flex: 1;
+            min-width: 0;
         }
 
         .file-info h4 {
@@ -293,7 +305,6 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 250px;
         }
 
         .file-info p {
@@ -304,6 +315,7 @@
         .file-actions {
             display: flex;
             gap: 10px;
+            flex-shrink: 0;
         }
 
         .action-btn {
@@ -427,6 +439,30 @@
             background: #e8f5e9;
             color: #2e7d32;
         }
+
+        .download-all {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -434,7 +470,7 @@
         <header>
             <div class="logo">
                 <i class="fas fa-file-contract"></i>
-                <h1>DocuConvert</h1>
+                <h1>DocuConvert Pro</h1>
             </div>
             <p class="subtitle">Convert between document formats with drag & drop and voice control</p>
         </header>
@@ -498,6 +534,10 @@
                 
                 <div class="file-list" id="fileList">
                     <!-- File items will be added here dynamically -->
+                </div>
+                
+                <div class="download-all" id="downloadAllContainer" style="display: none;">
+                    <button class="btn btn-success" id="downloadAllBtn"><i class="fas fa-download"></i> Download All Converted Files</button>
                 </div>
             </div>
             
@@ -568,6 +608,8 @@
             <p>All rights reserved. Privacy Policy | Terms of Service</p>
         </footer>
     </div>
+    
+    <div class="toast" id="toast"></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -583,9 +625,23 @@
             const voiceOutput = document.getElementById('voiceOutput');
             const fromFormat = document.getElementById('fromFormat');
             const toFormat = document.getElementById('toFormat');
+            const downloadAllBtn = document.getElementById('downloadAllBtn');
+            const downloadAllContainer = document.getElementById('downloadAllContainer');
+            const toast = document.getElementById('toast');
             
             // Array to store files
             let uploadedFiles = [];
+            
+            // Show toast notification
+            function showToast(message, isError = false) {
+                toast.textContent = message;
+                toast.style.backgroundColor = isError ? '#e74c3c' : '#27ae60';
+                toast.classList.add('show');
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
             
             // Event listeners
             browseBtn.addEventListener('click', () => fileInput.click());
@@ -639,7 +695,8 @@
                         type: getFileType(file.name),
                         size: formatFileSize(file.size),
                         status: "queued",
-                        converted: false
+                        converted: false,
+                        downloadUrl: null
                     };
                     
                     uploadedFiles.push(fileData);
@@ -648,6 +705,7 @@
                 
                 // Reset file input to allow selecting same files again
                 fileInput.value = '';
+                showToast(`${files.length} file(s) added successfully!`);
             }
             
             function getFileType(fileName) {
@@ -719,29 +777,84 @@
                         <span class="status-badge ${statusClass}">${statusText}</span>
                     </div>
                     <div class="file-actions">
-                        <div class="action-btn" title="Download" style="${fileData.converted ? '' : 'display: none'}">
+                        <div class="action-btn download-btn" title="Download" style="${fileData.converted ? '' : 'display: none'}">
                             <i class="fas fa-download"></i>
                         </div>
-                        <div class="action-btn" title="Remove">
+                        <div class="action-btn remove-btn" title="Remove">
                             <i class="fas fa-trash"></i>
                         </div>
                     </div>
                 `;
                 
                 // Add event listener for remove button
-                const removeBtn = fileItem.querySelector('.file-actions .action-btn:last-child');
+                const removeBtn = fileItem.querySelector('.remove-btn');
                 removeBtn.addEventListener('click', () => {
                     const fileName = fileItem.dataset.name;
                     uploadedFiles = uploadedFiles.filter(file => file.name !== fileName);
                     fileItem.remove();
+                    showToast(`"${fileName}" removed`);
+                    
+                    // Hide download all button if no files left
+                    if (uploadedFiles.length === 0) {
+                        downloadAllContainer.style.display = 'none';
+                    }
                 });
+                
+                // Add event listener for download button if file is converted
+                if (fileData.converted) {
+                    const downloadBtn = fileItem.querySelector('.download-btn');
+                    downloadBtn.addEventListener('click', () => {
+                        downloadFile(fileData);
+                    });
+                }
                 
                 fileList.appendChild(fileItem);
             }
             
+            // Download individual file
+            function downloadFile(fileData) {
+                if (!fileData.downloadUrl) {
+                    showToast(`Error: File not converted yet`, true);
+                    return;
+                }
+                
+                const a = document.createElement('a');
+                a.href = fileData.downloadUrl;
+                
+                // Generate new filename with converted extension
+                const fileName = fileData.name.substring(0, fileData.name.lastIndexOf('.'));
+                const convertedExt = toFormat.value;
+                a.download = `${fileName}_converted.${convertedExt}`;
+                
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                showToast(`"${fileData.name}" downloaded successfully!`);
+            }
+            
+            // Download all files
+            downloadAllBtn.addEventListener('click', () => {
+                const convertedFiles = uploadedFiles.filter(file => file.converted);
+                
+                if (convertedFiles.length === 0) {
+                    showToast('No converted files available', true);
+                    return;
+                }
+                
+                // Download each file
+                convertedFiles.forEach(file => {
+                    downloadFile(file);
+                });
+                
+                // Add a small delay between downloads
+                showToast(`Downloading ${convertedFiles.length} files...`);
+            });
+            
             // Conversion function
             convertBtn.addEventListener('click', function() {
                 if (uploadedFiles.length === 0) {
+                    showToast('Please add files to convert first!', true);
                     voiceOutput.innerHTML = '<p style="color: #e74c3c;">Please add files to convert first!</p>';
                     return;
                 }
@@ -768,14 +881,37 @@
                         uploadedFiles.forEach(file => {
                             file.status = "completed";
                             file.converted = true;
+                            
+                            // Generate download URL for the file
+                            const blob = new Blob([`Simulated content of ${file.name} converted to ${toFormat.value}`], 
+                                { type: 'text/plain' });
+                            file.downloadUrl = URL.createObjectURL(blob);
+                            
                             updateFileStatus(file.name, "completed");
                         });
                         
+                        showToast('Conversion completed successfully!');
                         voiceOutput.innerHTML = `<p><i class="fas fa-check-circle" style="color:#27ae60"></i> Conversion completed successfully! Your files are ready for download.</p>`;
                         
                         // Show download buttons
-                        document.querySelectorAll('.file-item .file-actions .action-btn:first-child').forEach(btn => {
+                        document.querySelectorAll('.file-item .download-btn').forEach(btn => {
                             btn.style.display = 'flex';
+                        });
+                        
+                        // Show download all button
+                        downloadAllContainer.style.display = 'block';
+                        
+                        // Add event listeners to new download buttons
+                        document.querySelectorAll('.file-item').forEach(item => {
+                            const fileName = item.dataset.name;
+                            const fileData = uploadedFiles.find(file => file.name === fileName);
+                            
+                            if (fileData && fileData.converted) {
+                                const downloadBtn = item.querySelector('.download-btn');
+                                downloadBtn.addEventListener('click', () => {
+                                    downloadFile(fileData);
+                                });
+                            }
                         });
                     }
                 }, 200);
@@ -872,9 +1008,12 @@
                     response += `<p>Preparing all files for download...</p>`;
                     // Simulate download
                     setTimeout(() => {
-                        response += `<p><i class="fas fa-check-circle" style="color:#27ae60"></i> All files downloaded successfully!</p>`;
-                        voiceOutput.innerHTML = response;
-                    }, 1500);
+                        if (uploadedFiles.some(file => file.converted)) {
+                            downloadAllBtn.click();
+                        } else {
+                            response += `<p style="color: #e74c3c;">No converted files available for download!</p>`;
+                        }
+                    }, 800);
                 } else if (command.toLowerCase().includes("select from")) {
                     const format = command.split("from")[1].trim().toLowerCase();
                     fromFormat.value = format;
