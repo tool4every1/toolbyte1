@@ -8,27 +8,39 @@
     body {
       font-family: Arial, sans-serif;
       padding: 30px;
-      background-color: #f9f9f9;
-    }
-    h2 {
+      background: url('https://source.unsplash.com/1600x900/?seo,writing') no-repeat center center fixed;
+      background-size: cover;
       color: #333;
     }
+
+    h2 {
+      color: #fff;
+      text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+    }
+
     textarea {
       width: 100%;
       height: 200px;
       padding: 10px;
       font-size: 16px;
       margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      background-color: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
+
     .stats {
       margin-top: 20px;
-      background: #fff;
+      background: rgba(255, 255, 255, 0.95);
       padding: 15px;
       border-radius: 8px;
-      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
     }
+
     .stats p {
       margin: 8px 0;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -57,7 +69,7 @@
       const words = text.trim().split(/\s+/).filter(word => word.length > 0);
       const charsWithSpaces = text.length;
       const charsWithoutSpaces = text.replace(/\s/g, '').length;
-      const estimatedTime = Math.ceil(words.length / 200); // avg reading speed: 200 wpm
+      const estimatedTime = Math.ceil(words.length / 200);
 
       wordCount.textContent = words.length;
       charCount.textContent = charsWithSpaces;
