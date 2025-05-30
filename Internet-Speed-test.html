@@ -326,14 +326,6 @@
                         <span class="label">Location:</span>
                         <span class="value" id="location">Detecting...</span>
                     </div>
-                    <div class="info-item">
-                        <span class="label">Network Operator:</span>
-                        <span class="value" id="operator">Detecting...</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="label">Connection Type:</span>
-                        <span class="value" id="connection-type">Detecting...</span>
-                    </div>
                 </div>
             </div>
 
@@ -406,9 +398,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // IP information display
             const ipAddress = document.getElementById('ip-address');
-            const location = document.getElementById('location');
-            const operator = document.getElementById('operator');
-            const connectionType = document.getElementById('connection-type');
+            const locationEl = document.getElementById('location');
             
             // Fetch real IP information using ipinfo.io API
             async function fetchIPInfo() {
@@ -417,22 +407,18 @@
                     const data = await response.json();
                     
                     ipAddress.textContent = data.ip || 'Not available';
-                    location.textContent = `${data.city}, ${data.region}, ${data.country}` || 'Not available';
-                    operator.textContent = data.org || 'Not available';
                     
-                    // Detect connection type
-                    if (navigator.connection) {
-                        const connection = navigator.connection;
-                        connectionType.textContent = connection.effectiveType || 'Not available';
-                    } else {
-                        connectionType.textContent = 'Not available';
-                    }
+                    // Format location information
+                    let locationInfo = '';
+                    if (data.city) locationInfo += data.city;
+                    if (data.region) locationInfo += locationInfo ? `, ${data.region}` : data.region;
+                    if (data.country) locationInfo += locationInfo ? `, ${data.country}` : data.country;
+                    
+                    locationEl.textContent = locationInfo || 'Not available';
                 } catch (error) {
                     console.error('Error fetching IP information:', error);
                     ipAddress.textContent = 'Error loading';
-                    location.textContent = 'Error loading';
-                    operator.textContent = 'Error loading';
-                    connectionType.textContent = 'Error loading';
+                    locationEl.textContent = 'Error loading';
                 }
             }
             
