@@ -1,11 +1,9 @@
-  
-    
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Toolbyte1 - Your Daily Tools, All in One Place</title>
+    <title>ToolByte1 - Fixed Search Functionality</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
@@ -250,6 +248,7 @@
             padding: 25px;
             box-shadow: var(--shadow);
             transition: var(--transition);
+            position: relative;
         }
         
         .tool-card:hover {
@@ -396,6 +395,11 @@
         .search-results ul li {
             padding: 10px 0;
             border-bottom: 1px solid #e2e8f0;
+            transition: var(--transition);
+        }
+
+        .search-results ul li:hover {
+            background-color: #f1f5f9;
         }
 
         .search-results ul li:last-child {
@@ -406,10 +410,26 @@
             color: var(--text-dark);
             text-decoration: none;
             transition: var(--transition);
+            display: block;
+            padding: 5px 10px;
+            border-radius: 4px;
         }
 
         .search-results ul li a:hover {
             color: var(--primary-blue);
+            background-color: #e0f2fe;
+        }
+        
+        /* Highlight effect */
+        .highlight {
+            animation: highlight 2s ease;
+            position: relative;
+        }
+        
+        @keyframes highlight {
+            0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.5); }
+            50% { box-shadow: 0 0 0 10px rgba(37, 99, 235, 0); }
+            100% { box-shadow: none; }
         }
         
         /* Responsive */
@@ -592,7 +612,7 @@
                     </div>
                     <h3>Image Converter</h3>
                     <p>Convert between JPG, PNG, GIF, WEBP and more formats</p>
-                    <a href="Image-Converter.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/Image-Converter.html" class="tool-button">Use Tool</a>
                     
                 </div>
                 
@@ -602,7 +622,7 @@
                     </div>
                     <h3>Image Compressor</h3>
                     <p>Reduce image file size without losing quality</p>
-                    <a href="image-compressor.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/image-compressor.html" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -620,7 +640,7 @@
                     </div>
                     <h3>Image Cropper</h3>
                     <p>Crop images to remove unwanted areas or focus on specific parts</p>
-                    <a href="Imagecroptool.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/Imagecroptool.html" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -629,7 +649,7 @@
                     </div>
                     <h3>Image to Text (OCR)</h3>
                     <p>Extract text from images with optical character recognition</p>
-                    <a href="ImagetoText.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/ImagetoText.html" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -638,7 +658,7 @@
                     </div>
                     <h3>Image Rotator/Flipper</h3>
                     <p>Rotate or flip images horizontally/vertically</p>
-                    <a href="image-rotator.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/image-rotator.html" class="tool-button">Use Tool</a>
                 </div>
             </div>
         </div>
@@ -659,7 +679,7 @@
                     </div>
                     <h3>PDF to Word / Word to PDF</h3>
                     <p>Convert between PDF and Word documents seamlessly</p>
-                    <a href="pdf-to-word.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/pdf-to-word.html" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -668,7 +688,7 @@
                     </div>
                     <h3>PDF Compressor</h3>
                     <p>Reduce PDF file size while maintaining quality</p>
-                    <a href="PDF-compressor.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/PDF-compressor.html" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -686,7 +706,7 @@
                     </div>
                     <h3>Document Converter</h3>
                     <p>Convert between various document formats</p>
-                    <a href="Document-Converter.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/Document-Converter.html" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -697,22 +717,21 @@
                     <p>Add or remove passwords from PDF files</p>
                     <a href="#" class="tool-button">Use Tool</a>
                 </div>
-				<div class="tool-card">
+                <div class="tool-card">
                     <div class="tool-icon-container">
                         <i class="fas fa-exchange-alt"></i>
                     </div>
-                    <h3>PDF to Excel</h3>
-                    <p>Convert Pdf to Excel</p>
-                    <a href="PDF-to-Excel-Converter.html" class="tool-button">Use Tool</a>
+                    <h3>PDF - Excel Converter</h3>
+                    <p>Convert between PDF-Excel formats</p>
+                    <a href="https://tool4every1.github.io/toolbyte1/PDF-to-Excel-Converter.html" class="tool-button">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
                     <div class="tool-icon-container">
                         <i class="fas fa-signature"></i>
                     </div>
                     <h3>eSign PDF</h3>
                     <p>Add digital signatures to your PDF documents</p>
-                    <a href="eSignPDF.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/eSignPDF.html" class="tool-button">Use Tool</a>
                 </div>
             </div>
         </div>
@@ -733,7 +752,7 @@
                     </div>
                     <h3>Scientific Calculator</h3>
                     <p>Advanced calculator with scientific functions</p>
-                    <a href="Scientific-Calculator.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/Scientific-Calculator.html" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -742,7 +761,7 @@
                     </div>
                     <h3>Age Calculator</h3>
                     <p>Calculate age from birth date to current date</p>
-                    <a href="Age-Calculator.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/Age-Calculator.html" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -751,7 +770,7 @@
                     </div>
                     <h3>BMI Calculator</h3>
                     <p>Calculate your Body Mass Index</p>
-                    <a href="BMI-Calculator.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/BMI-Calculator.html" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -760,7 +779,7 @@
                     </div>
                     <h3>Loan EMI Calculator</h3>
                     <p>Calculate Equated Monthly Installments for loans</p>
-                    <a href="Loan-EMI-Calculator.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/Loan-EMI-Calculator.html" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -769,7 +788,7 @@
                     </div>
                     <h3>GST Calculator</h3>
                     <p>Calculate Goods and Services Tax amounts</p>
-                    <a href="GST-Calculator.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/GST-Calculator.html" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -778,7 +797,7 @@
                     </div>
                     <h3>Currency Converter</h3>
                     <p>Convert between world currencies with live rates</p>
-                    <a href="Currency-Converter.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/Currency-Converter.html" class="tool-button">Use Tool</a>
                 </div>
             </div>
         </div>
@@ -808,7 +827,7 @@
                     </div>
                     <h3>Word & Character Counter</h3>
                     <p>Count words, characters, sentences and paragraphs</p>
-                    <a href="Word-Character-Counter.html" class="tool-button">Use Tool</a>
+                    <a href="#" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -817,7 +836,7 @@
                     </div>
                     <h3>Remove Duplicate Lines</h3>
                     <p>Clean up text by removing duplicate lines</p>
-                    <a href="Remove-Duplicate-Lines.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/Remove-Duplicate-Lines.html" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -826,7 +845,7 @@
                     </div>
                     <h3>Text Sorter</h3>
                     <p>Sort lines of text alphabetically or numerically</p>
-                    <a href="Text-Sorter.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/Text-Sorter.html" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -835,7 +854,7 @@
                     </div>
                     <h3>Text Reverser</h3>
                     <p>Reverse text, words, or character order</p>
-                    <a href="Text-Reverser.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/Text-Reverser.html" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -910,7 +929,7 @@
                     </div>
                     <h3>Regex Tester</h3>
                     <p>Test and debug regular expressions in real-time</p>
-                    <a href="Regex-Tester.html" class="tool-button">Use Tool</a>
+                    <a href="#" class="tool-button">Use Tool</a>
                 </div>
             </div>
         </div>
@@ -931,7 +950,7 @@
                     </div>
                     <h3>Color Picker from Image</h3>
                     <p>Extract color palettes from any uploaded image</p>
-                    <a href="Color-Picker-from-Image.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/Color-Picker-from-Image.html" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -940,7 +959,7 @@
                     </div>
                     <h3>HEX to RGB Converter</h3>
                     <p>Convert between HEX and RGB color formats</p>
-                    <a href="HEX-to-RGB.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/HEX-to-RGB.html" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -949,7 +968,7 @@
                     </div>
                     <h3>Gradient Generator</h3>
                     <p>Create beautiful CSS gradients with custom controls</p>
-                    <a href="Gradient-Generator.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/Gradient-Generator.html" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -958,7 +977,7 @@
                     </div>
                     <h3>Contrast Checker</h3>
                     <p>Check color contrast ratios for accessibility standards</p>
-                    <a href="Colour-Contrast-Checker.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/Colour-Contrast-Checker.html" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -967,7 +986,7 @@
                     </div>
                     <h3>Palette Generator</h3>
                     <p>Generate harmonious color palettes for your projects</p>
-                    <a href="color-Palette-Generator.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/color-Palette-Generator.html" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -997,7 +1016,7 @@
                     </div>
                     <h3>Keyword Density Checker</h3>
                     <p>Analyze keyword frequency and density in your content</p>
-                    <a href="Keyword-Density-Checker.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/Keyword-Density-Checker.html" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -1006,7 +1025,7 @@
                     </div>
                     <h3>Meta Tag Analyzer</h3>
                     <p>Check and analyze meta tags for SEO optimization</p>
-                    <a href="Meta-Tag-Analyzer-1.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/Meta-Tag-Analyzer-1.html" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -1015,7 +1034,7 @@
                     </div>
                     <h3>Word Counter</h3>
                     <p>Count words, characters and reading time for SEO content</p>
-                    <a href="Word-Counter.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/Word-Counter.html" class="tool-button">Use Tool</a>
                 </div>
             </div>
         </div>
@@ -1045,7 +1064,7 @@
                     </div>
                     <h3>Barcode Generator</h3>
                     <p>Generate barcodes in various formats for products</p>
-                    <a href="Barcode-Generator.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/Barcode-Generator.html" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -1054,7 +1073,7 @@
                     </div>
                     <h3>UUID Generator</h3>
                     <p>Generate universally unique identifiers (UUIDs)</p>
-                    <a href="Fake-UUID-Generator.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/Fake-UUID-Generator.html" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -1063,7 +1082,7 @@
                     </div>
                     <h3>Unit Converter</h3>
                     <p>Convert between various units of measurement</p>
-                    <a href="Unit-Converter.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/Unit-Converter.html" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -1072,7 +1091,7 @@
                     </div>
                     <h3>Time Zone Converter</h3>
                     <p>Convert times between different time zones</p>
-                    <a href="Time-Zone-Converter.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/Time-Zone-Converter.html" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -1081,7 +1100,7 @@
                     </div>
                     <h3>Random Number/Password Generator</h3>
                     <p>Generate secure random numbers and passwords</p>
-                    <a href="Random-Number-Password-Generator.html" class="tool-button">Use Tool</a>
+                    <a href="https://tool4every1.github.io/toolbyte1/Random-Number-Password-Generator.html" class="tool-button">Use Tool</a>
                 </div>
             </div>
         </div>
@@ -1108,13 +1127,12 @@
                         <li><a href="#tools">All Tools</a></li>
                         <li><a href="#">Privacy Policy</a></li>
                         <li><a href="#">Terms of Use</a></li>
-                        <li><a href='#'>Contact-US</a></li>
                     </ul>
                 </div>
             </div>
             
             <div class="footer-bottom">
-                <p>© 2025 ToolByte1. All rights reserved.</p>
+                <p>© 2025 toolbyte1. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -1127,26 +1145,28 @@
         });
         
         // Search functionality
-        document.getElementById('searchButton').addEventListener('click', function() {
-            performSearch();
+        document.getElementById('searchButton').addEventListener('click', performSearch);
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') performSearch();
         });
         
-        // Also search when Enter key is pressed
-        document.getElementById('searchInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                performSearch();
+        // Close search results when clicking outside
+        document.addEventListener('click', function(event) {
+            const searchContainer = document.querySelector('.search-container');
+            if (!searchContainer.contains(event.target)) {
+                document.getElementById('searchResults').style.display = 'none';
             }
         });
         
         function performSearch() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
             const resultsContainer = document.getElementById('searchResults');
             const resultsList = document.getElementById('resultsList');
             
             // Clear previous results
             resultsList.innerHTML = '';
             
-            if (searchTerm.trim() === '') {
+            if (!searchTerm) {
                 resultsContainer.style.display = 'none';
                 return;
             }
@@ -1159,22 +1179,33 @@
                 const toolName = card.querySelector('h3').textContent.toLowerCase();
                 const toolDesc = card.querySelector('p').textContent.toLowerCase();
                 
+                // Check for matches in tool name or description
                 if (toolName.includes(searchTerm) || toolDesc.includes(searchTerm)) {
                     foundResults = true;
                     const listItem = document.createElement('li');
                     const link = document.createElement('a');
-                    link.href = '#' + card.closest('.tools-section').id;
-                    link.textContent = toolName;
-                    link.onclick = function() {
-                        // Scroll to the tool section
-                        card.scrollIntoView({ behavior: 'smooth' });
-                        // Highlight the card
-                        card.style.boxShadow = '0 0 0 3px var(--primary-blue)';
-                        setTimeout(() => {
-                            card.style.boxShadow = 'var(--shadow)';
-                        }, 2000);
+                    link.href = '#';
+                    link.textContent = card.querySelector('h3').textContent;
+                    
+                    // Add click handler to scroll to tool
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        
+                        // Remove previous highlights
+                        document.querySelectorAll('.tool-card.highlight').forEach(el => {
+                            el.classList.remove('highlight');
+                        });
+                        
+                        // Scroll to tool
+                        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        
+                        // Add highlight effect
+                        card.classList.add('highlight');
+                        
+                        // Hide search results
                         resultsContainer.style.display = 'none';
-                    };
+                    });
+                    
                     listItem.appendChild(link);
                     resultsList.appendChild(listItem);
                 }
@@ -1189,14 +1220,6 @@
                 resultsContainer.style.display = 'block';
             }
         }
-        
-        // Close search results when clicking outside
-        document.addEventListener('click', function(event) {
-            const searchContainer = document.querySelector('.search-container');
-            if (!searchContainer.contains(event.target)) {
-                document.getElementById('searchResults').style.display = 'none';
-            }
-        });
     </script>
 </body>
 </html>
